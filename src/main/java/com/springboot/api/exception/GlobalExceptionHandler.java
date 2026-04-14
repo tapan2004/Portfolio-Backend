@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
                 .body(ContactResponse.fail(ex.getMessage()));
     }
 
+    // Handle static resources not found (like favicon.ico) without polluting logs
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<Void> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        return ResponseEntity.notFound().build();
+    }
+
     // Handle all other exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ContactResponse> handleGenericException(Exception ex) {
