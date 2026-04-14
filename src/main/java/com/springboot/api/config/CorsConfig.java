@@ -13,34 +13,22 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,https://tapan-manna-portfolio.vercel.app}")
-    private String allowedOriginsStr;
-
     @Bean
     public CorsFilter corsFilter() {
-        CorsConfiguration config =
-                new CorsConfiguration();
-        List<String> allowedOrigins = Arrays.asList(allowedOriginsStr.split("\\s*,\\s*"));
-        config.setAllowedOrigins(allowedOrigins);
-        config.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE",
-                        "OPTIONS"
-                )
-        );
+        CorsConfiguration config = new CorsConfiguration();
+        
+        // Use patterns to allow any origin dynamically (safest for Render deployments)
+        config.setAllowedOriginPatterns(List.of("*"));
+        
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
 
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(
-                "/**",
-                config
-        );
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 }
