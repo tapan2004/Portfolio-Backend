@@ -20,8 +20,6 @@ import java.util.List;
 public class ContactController {
     private final ContactService contactService;
 
-    // POST /api/contact
-    // Receives a contact form submission and saves it to MongoDB
     @PostMapping
     public ResponseEntity<ContactResponse> submitContact(@Valid @RequestBody ContactRequest request) {
         log.info("Contact form submitted by: {}", request.getEmail());
@@ -31,24 +29,18 @@ public class ContactController {
                 .body(ContactResponse.ok("Message received! I'll get back to you soon.", saved.getId()));
     }
 
-    // GET /api/contact
-    // Get all messages (protect this in production with Spring Security!)
     @GetMapping
     public ResponseEntity<ContactResponse> getAllMessages() {
         List<ContactMessage> messages = contactService.getAllMessages();
         return ResponseEntity.ok(ContactResponse.ok("Messages fetched", messages));
     }
 
-    // GET /api/contact/unread
-    // Get unread messages only
     @GetMapping("/unread")
     public ResponseEntity<ContactResponse> getUnreadMessages() {
         List<ContactMessage> messages = contactService.getUnreadMessages();
         return ResponseEntity.ok(ContactResponse.ok("Unread messages fetched", messages));
     }
-
-    // PATCH /api/contact/{id}/read
-    // Mark a message as read
+    
     @PatchMapping("/{id}/read")
     public ResponseEntity<ContactResponse> markAsRead(@PathVariable String id) {
         ContactMessage updated = contactService.markAsRead(id);
